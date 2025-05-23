@@ -10,6 +10,8 @@ public enum Type
     Stamina,
     Jump,
     Save,
+    DoubleJump,
+
 
 
 }
@@ -52,6 +54,12 @@ public class FieldItems : MonoBehaviour
                 case Type.Save:
                     CharacterManager.Instance.Player.controller.savePoint.position = transform.position;
                     break;
+
+                case Type.DoubleJump:
+                    CharacterManager.Instance.Player.controller.canDoubleJump = true;
+                    CharacterManager.Instance.Player.controller.doubleJumpImage.gameObject.SetActive(true);
+                    DoubleJump();
+                    break;
             }
         }
        
@@ -77,12 +85,19 @@ public class FieldItems : MonoBehaviour
         yield return new WaitForSeconds(4f);
         CharacterManager.Instance.Player.controller.runStaminaUse = originStamineUseValue;
         CharacterManager.Instance.Player.condition.stamina.passiveValue = originStaminaPassiveValue;
-        Destroy(gameObject);
+        itemObject.gameObject.SetActive(true);
     }
 
-    void Head()
+    void DoubleJump()
     {
+        StartCoroutine(MakeCubeGone());
+    }
 
+    IEnumerator MakeCubeGone()
+    {
+        itemObject.gameObject.SetActive(false);
+        yield return new WaitForSeconds(3f);
+        itemObject.gameObject.SetActive(true);
     }
 
 }

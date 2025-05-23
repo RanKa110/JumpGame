@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.UI;
 
 public class PlayerController : MonoBehaviour
 //    플레이어 이동 관련
@@ -18,6 +19,8 @@ public class PlayerController : MonoBehaviour
     [Header("점프 관련")]
     public float jumpForce;
     public LayerMask groundLayerMask;
+    public bool canDoubleJump = false;
+    public Image doubleJumpImage;
 
     [Header("시점")]
     public Transform cameraContainer;
@@ -59,6 +62,7 @@ public class PlayerController : MonoBehaviour
         //    그리고 Locked는 중앙에 잠금!
         //    즉, 마우스가 안보이게 해주는거야!
         gameOverMassage.gameObject.SetActive(false);
+        doubleJumpImage.gameObject.SetActive(false);
     }
 
     private void FixedUpdate()
@@ -168,6 +172,12 @@ public class PlayerController : MonoBehaviour
                 _rb.AddForce(Vector2.up * jumpForce, ForceMode.Impulse);
                 //    Impulse는 순간적으로 힘을 주는걸 말해
             }
+            else if (context.phase == InputActionPhase.Started && canDoubleJump)
+            {
+                _rb.AddForce(Vector2.up * jumpForce, ForceMode.Impulse);
+                doubleJumpImage.gameObject.SetActive(false);
+                canDoubleJump = false;
+            }
         }
         
     }
@@ -186,6 +196,7 @@ public class PlayerController : MonoBehaviour
         {
             if (Physics.Raycast(rays[i], 0.1f, groundLayerMask))
             {
+
                 return true;
             }
         }
